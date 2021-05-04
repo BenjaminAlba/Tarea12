@@ -1,71 +1,73 @@
 package uaslp.ingenieria.labs.list;
 
-public class ArrayList <H> implements List<H>
-{
+public class ArrayList <H> implements List<H>{
+
     private Object array[];
     private int size;
 
-    public ArrayList()
-    {
+    public ArrayList() {
         this.array = new Object[4];
     }
 
     @Override
-    public void add(H data)
-    {
+    public void add(H data) {
+        if(size== array.length){
+            Object []oldArray = array;
+            array = new Object[array.length*2];
+            System.arraycopy(oldArray,0,array,0,oldArray.length);
+        }
+
         this.array[size++] = data;
     }
 
     @Override
-    public H get(int index)
-    {
+    public H get(int index) {
+        if(index < 0 || index >size)
+            throw new MyIndexOutOfBoundsException();
+
         return (H)this.array[index];
     }
 
     @Override
-    public void delete(int index) { }
+    public void delete(int index) {
+        if(array.length - (index + 1) >= 0){
+            System.arraycopy(this.array,index + 1,this.array,index + 1 - 1,array.length - (index + 1));
+        }
+        else{
+            throw new MyIndexOutOfBoundsException();
+        }
+        size--;
+    }
 
     @Override
-    public int getSize()
-    {
+    public int getSize() {
         return size;
     }
 
     @Override
-    public Iterator<H> getIterator()
-    {
+    public Iterator<H> getIterator() {
         return new ForwardIterator();
     }
 
     @Override
-    public Iterator<H> getReverseIterator()
-    {
+    public Iterator<H> getReverseIterator() {
         return new ReverseIterator();
     }
 
-    public class ForwardIterator implements Iterator<H>
-    {
+    public class ForwardIterator implements Iterator<H>{
         private int currentIndex;
 
-        public ForwardIterator()
-        {
+        public ForwardIterator(){
             currentIndex=0;
         }
 
-        public int getCurrentIndex()
-        {
-            return currentIndex;
-        }
-
         @Override
-        public boolean hasNext()
-        {
+        public boolean hasNext() {
             return currentIndex<size;
         }
 
         @Override
-        public H next()
-        {
+        public H next() {
             H data;
             data=get(currentIndex);
             currentIndex++;
@@ -73,24 +75,20 @@ public class ArrayList <H> implements List<H>
         }
     }
 
-    public class ReverseIterator implements Iterator<H>
-    {
+    public class ReverseIterator implements Iterator<H>{
         private int currentIndex;
 
-        public ReverseIterator()
-        {
+        public ReverseIterator(){
             currentIndex=size-1;
         }
 
         @Override
-        public boolean hasNext()
-        {
+        public boolean hasNext() {
             return currentIndex>=0;
         }
 
         @Override
-        public H next()
-        {
+        public H next() {
             H data;
             data=get(currentIndex);
             currentIndex--;
